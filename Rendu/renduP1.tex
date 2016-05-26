@@ -1,0 +1,98 @@
+\documentclass{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+\usepackage[top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath,amsfonts,amssymb}
+\usepackage{parallel}
+\usepackage{float}
+\restylefloat{table}
+
+\usepackage[linesnumbered,algoruled,boxed,lined]{algorithm2e}
+
+\setlength\parindent{24pt} % indentation paragraphes
+
+\begin{document}
+\begin{titlepage}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}} % Defines a new command for the horizontal lines, change thickness here
+
+\center % Center everything on the page
+ 
+%----------------------------------------------------------------------------------------
+%	HEADING SECTIONS
+%----------------------------------------------------------------------------------------
+
+\textsc{\LARGE ENSEEIHT}\\[1.5cm] % Name of your university/college
+\textsc{\Large Graphes}\\[0.5cm] % Major heading such as course name
+\textsc{\large Projet}\\[0.5cm] % Minor heading such as course title
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\HRule \\[0.4cm]
+{ \huge \bfseries  Ordonnancement parallèle de tâches sur un graphe orienté acyclique}\\[0.4cm] % Title of your document
+\HRule \\[1.5cm]
+ 
+%----------------------------------------------------------------------------------------
+%	AUTHOR SECTION
+%----------------------------------------------------------------------------------------
+
+\emph{auteurs:}\\
+\textsc{barras} - \textsc{thomas} \\
+\textsc{maurel} - \textsc{simon} \\
+
+%----------------------------------------------------------------------------------------
+%	DATE SECTION
+%----------------------------------------------------------------------------------------
+
+\date{} %enleve la date
+
+%----------------------------------------------------------------------------------------
+%	LOGO SECTION
+%----------------------------------------------------------------------------------------
+
+\vspace{7.2cm}
+\begin{center}
+%\includegraphics[width=5]{N7.png}
+\end{center}
+
+%----------------------------------------------------------------------------------------
+
+\vfill % Fill the rest of the page with whitespace
+
+\end{titlepage}
+
+\tableofcontents %table des matières.
+
+\vfill
+
+\section{Question 1}
+
+\begin{itemize}
+	\item[(a)] Les noeuds du DAG représentent l'existence d'un sommet du maillage. 
+	\item[(b)] La condition "un noeud v1 doit être traité avant un noeud v2" est : $\E$ un chemin reliant v2 et v1 qui respecte l'orientation.
+\end{itemize}
+
+
+\section{Question 2}
+
+\begin{itemize}
+	\item[(a)] Pour inclure le coût des communications, on pondère les arêtes.
+	\item[(b)] L'équilibrage de charges se traduit par le fait que l'arbre a une profondeur faible. \\
+	Le volume de communications réduit se traduit par le fait que la pondération totale des arcs reliant 2 partitions soit minimale. 
+	\item[(c)] 
+\end{itemize}
+
+\section{Question 3}
+
+\begin{itemize}
+	\item[]
+\end{itemize}
+
+
+
+\end{document}
