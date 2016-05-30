@@ -84,13 +84,21 @@
 	\item[(a)] Pour inclure le coût des communications, on pondère les arêtes.
 	\item[(b)] L'équilibrage de charges se traduit par le fait que l'arbre a une profondeur faible. \\
 	Le volume de communications réduit se traduit par le fait que la pondération totale des arcs reliant 2 partitions soit minimale. 
-	\item[(c)] 
+	\item[(c) bonus] 
 \end{itemize}
 
 \section{Question 3}
 
 \begin{itemize}
-	\item[]
+	\item[(a)] Lorsqu'une faute est commise, il faut recalculer toutes les tâches parentes menant à $v_i$ car les résultats sont chaînés ( ils dépendent des résultats précédents ) et non conservés.
+	\item[(b)] En supponsant que nous détectons immédiatement l'erreur, et que l'éxécution s'arrête à ce moment, puisque tous les résultats précédents sont enregistrés, seule la tâche où s'est produite l'erreur est rééxcutée, on a donc $\mu = 1$
+	\item[(c)] 
+\end{itemize}
+
+\section{Question 4}
+
+\begin{itemize}
+	\item 
 \end{itemize}
 
 
