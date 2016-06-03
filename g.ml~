@@ -145,7 +145,7 @@ let ordonnanceur_sans_heuristique r g =
 				else
 				Mark.set t (m+1);
 				let zp = t::z in
-					let yp = fold_succ (fun vt vq -> if (listInclude (pred g vt) zp) then [vq@[vt]] else [vq]) g t q in	
+					let yp = fold_succ (fun vt vq -> if (listInclude (pred g vt) zp) then vq@[vt] else vq) g t q in	
 			 		(tri_rec yp zp (m+1))@[t]
 			end	
 		in tri_rec y [] 0
