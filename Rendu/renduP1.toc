@@ -1,1 +1,13 @@
 \select@language {french}
+\contentsline {section}{\numberline {0.1}Question 1}{1}
+\contentsline {section}{\numberline {0.2}Question 2}{1}
+\contentsline {section}{\numberline {0.3}Question 3}{1}
+\contentsline {section}{\numberline {0.4}Question 4}{1}
+\contentsline {section}{\numberline {0.5}Question 5}{2}
+\contentsline {section}{\numberline {0.6}Question 6}{2}
+\contentsline {section}{\numberline {0.7}Question 8}{2}
+\contentsline {section}{\numberline {0.8}Question 10}{2}
+\contentsline {section}{\numberline {0.9}Question 11}{2}
+\contentsline {section}{\numberline {0.10}Question 13}{2}
+\contentsline {section}{\numberline {0.11}Question 14}{2}
+\contentsline {section}{\numberline {0.12}Question 16}{2}
