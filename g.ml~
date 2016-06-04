@@ -22,6 +22,29 @@ add_edge g1 c e;;
 add_edge g1 d f;;
 add_edge g1 e f;;
 
+let g2 = create ();;
+let a=V.create 0;;
+let b=V.create 1;;
+let c=V.create 2;;
+let d=V.create 3;;
+let e=V.create 4;;
+let f=V.create 5;;
+let g=V.create 6;;
+add_vertex g2 a;;
+add_vertex g2 b;;
+add_vertex g2 c;;
+add_vertex g2 d;;
+add_vertex g2 e;;
+add_vertex g2 f;;
+add_vertex g2 g;;
+add_edge g2 a d;;
+add_edge g2 b e;;
+add_edge g2 c f;;
+add_edge g2 d e;;
+add_edge g2 e f;;
+add_edge g2 f g;;
+
+
 (* ------------------------ Affichage ------------------------ *)
 let printSommets g = fold_vertex (fun v qt -> Format.printf "%i " (V.label v)) g ();;
 let printAretes g = fold_edges (fun v1 v2 qt-> Format.printf "- %i %i -" (V.label v1) (V.label v2)) g ();;
@@ -64,14 +87,21 @@ let listInclude l1 l2 =
 	List.fold_right (fun vt vq -> (varInclude vt l2) && vq) l1 true;
 ;;
 
+(* prise en main de la fonction List.sort *) 
+let sortByUe l =
+	List.sort (fun a b -> if a < b then -1 else (if a > b then 1 else 0)) l
+;;
+
 (* tests *)
 let l1 = 1::2::3::[];;
 let l2 = 2::3::[];;
 let l3 = 4::2::3::[];;
 let l4 = 1::2::5::6::[];;
+let l5 = 7::2::5::4::[];;
 varInclude 1 l1;;
 listInclude l2 l1;;
 listInclude l3 l4;;
+let lsorted = sortByUe l5;;
 
 (* ------------------------ Manipulation Graphe ------------------------ *)
 (* entrees: 	
@@ -166,7 +196,8 @@ let ordonnanceur_sans_heuristique res g =
 (* tests *)
 let ordog1 = ordonnanceur_sans_heuristique 3 g1;;
 let printordog1 = printListeListeSommets ordog1;;
-
+let ordog2 = ordonnanceur_sans_heuristique 3 g2;;
+let printordog2 = printListeListeSommets ordog2;;
 
 (* entrees: 
    - un nombre entier de ressources r
@@ -182,8 +213,45 @@ val ordonnanceur_avec_heuristique : int -> DAG.t -> trace
 (* heuristique:
 	traiter en priorite les noeuds de plus grand chemin critique
 *)
-let chemin_critique_max l = 
-;; 
+let rec length_chemin_critique g v =
+	let listeSucc = (succ g v) in
+		match listeSucc with
+		|[] -> 0
+		|t::q -> 
+			1 + List.fold_left (fun acc vx -> max acc (length_chemin_critique g vx)) 0 listeSucc	
+;;
+
+
+(* tests *)
+let lengthg1a = length_chemin_critique g1 (find_vertex g1 0);;
+let lengthg2a = length_chemin_critique g2 (find_vertex g2 0);;
+let lengthg2b = length_chemin_critique g2 (find_vertex g2 1);;
+let lengthg2c = length_chemin_critique g2 (find_vertex g2 2);;
+
+let sortBy_chemin_critique g l =
+	List.sort (fun a b -> if ((length_chemin_critique g a)  < (length_chemin_critique g b)) then -1 else (if ((length_chemin_critique g a) > (length_chemin_critique g b)) then 1 else 0)) l
+;;
+
+(* tests *)
+let sortedg2= sortBy_chemin_critique g2 [(find_vertex g2 0);(find_vertex g2 1);(find_vertex g2 2)];;
+let printBeforeSort = printListeSommets [(find_vertex g2 0);(find_vertex g2 1);(find_vertex g2 2)];;
+let printAfterSort = printListeSommets sortedg2;;
+
+let ordonnanceur_avec_heuristique res g =
+	let rec ordonnanceur_full y z result =
+		match y with
+		|[] -> result
+		|t::q ->
+			let (y_etape, z_etape, result_etape) = etape_ordonnanceur g y z res 
+			in ordonnanceur_full (sortBy_chemin_critique g y_etape) z_etape (result@[result_etape])
+	in ordonnanceur_full (sansDep g) [] []	
+;;
+
+(* tests *)
+let ordog1h = ordonnanceur_avec_heuristique 3 g1;;
+let printordog1h = printListeListeSommets ordog1h;;
+let ordog2h = ordonnanceur_avec_heuristique 3 g2;;
+let printordog2h = printListeListeSommets ordog2h;;
 
 
 (* entrees: 
