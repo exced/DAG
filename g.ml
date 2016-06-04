@@ -26,6 +26,8 @@ add_edge g1 e f;;
 let printSommets g = fold_vertex (fun v qt -> Format.printf "%i " (V.label v)) g ();;
 let printAretes g = fold_edges (fun v1 v2 qt-> Format.printf "- %i %i -" (V.label v1) (V.label v2)) g ();;
 let printListeSommets l = List.fold_right (fun v qt -> Format.printf "%i " (V.label v)) l ();;
+let printListeListeSommets l = List.map (fun v -> begin Format.printf "[ "; (printListeSommets v); Format.printf " ] " end ) l;;
+let printMarkfromList l = List.fold_right (fun v qt -> Format.printf "%i " (Mark.get v)) l ();; 
 
 (* ------------------------ sansDep ------------------------ *)
 (* sans dependances
@@ -96,18 +98,17 @@ let minMark l =
 val tri_topologique : DAG.t -> DAG.vertex list
 *)
 let tri_topologique g =
-	let y = sansDep g in
-		let rec tri_rec y z m =
-			match y with
-			| [] -> []
-			| t::q ->	
-			begin
-				Mark.set t (m+1);
-				let zp = t::z in
-					let yp = fold_succ (fun vt vq -> if (listInclude (pred g vt) zp) then vq@[vt] else vq) g t q in	
-			 		(tri_rec yp zp (m+1))@[t]
-			end	
-		in tri_rec y [] 0
+	let rec tri_rec y z m =
+		match y with
+		| [] -> []
+		| t::q ->	
+		begin
+			Mark.set t (m+1);
+			let zp = t::z in
+				let yp = fold_succ (fun vt vq -> if (listInclude (pred g vt) zp) then vq@[vt] else vq) g t q in	
+		 		(tri_rec yp zp (m+1))@[t]
+		end	
+	in tri_rec (sansDep g) [] 0
 ;;
 
 (* tests *)
@@ -133,24 +134,38 @@ type trace = (DAG.vertex list) list;;
    - vous n'utiliserez pas d'heuristique
 val ordonnanceur_sans_heuristique : int -> DAG.t -> trace
    *)
-let ordonnanceur_sans_heuristique r g =
-	let y = sansDep g in
-		let rec tri_rec y z zlist m =
-			match y with
-			| [] -> [z]
-			| t::q ->	
-			begin
-				if (r < (m+1)) then
-					(tri_rec y [] zlist@[z])
-				else
-				Mark.set t (m+1);
-				let zp = t::z in
-					let yp = fold_succ (fun vt vq -> if (listInclude (pred g vt) zp) then [vq@[vt]] else [vq]) g t q in	
-			 		(tri_rec yp zp (m+1))@[t]
-			end	
-		in tri_rec y [] 0
+let rec etape_ordonnanceur g y z res =
+	let rec tri_rec y ytodo z result res m =
+		match y with
+		| [] -> (ytodo, z ,result)
+		| t::q ->	
+			(* not enough resources *)
+			if (res < 1) then
+				(y@ytodo, z, result)
+			else
+				begin
+					(* enough *)
+					Mark.set t (m+1);
+					let zp = t::z in
+						let yp = fold_succ (fun vt vq -> if (listInclude (pred g vt) zp) then vq@[vt] else vq) g t ytodo in	
+	 					(tri_rec q yp zp (result@[t]) (res - 1) (m+1))
+				end	
+	in tri_rec y [] z [] res 0
 ;;
 
+let ordonnanceur_sans_heuristique res g =
+	let rec ordonnanceur_full y z result =
+		match y with
+		|[] -> result
+		|t::q ->
+			let (y_etape, z_etape, result_etape) = etape_ordonnanceur g y z res 
+			in ordonnanceur_full y_etape z_etape (result@[result_etape])
+	in ordonnanceur_full (sansDep g) [] []
+;;
+
+(* tests *)
+let ordog1 = ordonnanceur_sans_heuristique 3 g1;;
+let printordog1 = printListeListeSommets ordog1;;
 
 
 (* entrees: 
@@ -164,6 +179,12 @@ let ordonnanceur_sans_heuristique r g =
    - vous utiliserez une heuristique pour ameliorer la duree de la trace
 val ordonnanceur_avec_heuristique : int -> DAG.t -> trace 
    *)
+(* heuristique:
+	traiter en priorite les noeuds de plus grand chemin critique
+*)
+let sort_chemin_critique g l =
+	 
+;; 
 
 
 (* entrees: 
