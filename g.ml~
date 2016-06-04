@@ -22,6 +22,18 @@ add_edge g1 c e;;
 add_edge g1 d f;;
 add_edge g1 e f;;
 
+(* spec lv.length = lm.length *)
+(* pondération -> partie ordonnanceur avec contrainte *)
+let  memorySet g lv lm = 
+	if (List.length lv = List.length lm) then
+		List.fold_right (fun tv tq -> List.fold_right (fun tvm tqm ->  Mark.set (find_vertex g tv) tvm ) lm ()) lv ()
+	else
+		failwith"Error lists must have same length"
+;;
+
+let g1p = memorySet g1 [0;1;2;3;4;5] [2;1;1;3;2;1];;
+
+
 let g2 = create ();;
 let a=V.create 0;;
 let b=V.create 1;;
@@ -43,6 +55,7 @@ add_edge g2 c f;;
 add_edge g2 d e;;
 add_edge g2 e f;;
 add_edge g2 f g;;
+
 
 
 (* ------------------------ Affichage ------------------------ *)
@@ -93,11 +106,11 @@ let sortByUe l =
 ;;
 
 (* tests *)
-let l1 = 1::2::3::[];;
-let l2 = 2::3::[];;
-let l3 = 4::2::3::[];;
-let l4 = 1::2::5::6::[];;
-let l5 = 7::2::5::4::[];;
+let l1 = [1;2;3];;
+let l2 = [2;3];;
+let l3 = [4;2;3];;
+let l4 = [1;2;5;6];;
+let l5 = [7;2;5;4];;
 varInclude 1 l1;;
 listInclude l2 l1;;
 listInclude l3 l4;;
@@ -111,8 +124,9 @@ let lsorted = sortByUe l5;;
    	- bool 
 	pre:   
 *)
-let minMark l =
-	List.fold_right (fun vt vq -> if ((Mark.get vt) < (Mark.get vq)) then vt else vq) (List.tl l) (List.hd l)
+
+let sortByMarkUe l =
+	List.sort (fun a b -> if (Mark.get a) > (Mark.get b) then -1 else (if (Mark.get a) < (Mark.get b) then 1 else 0)) l
 ;;
 
 
@@ -128,17 +142,14 @@ let minMark l =
 val tri_topologique : DAG.t -> DAG.vertex list
 *)
 let tri_topologique g =
-	let rec tri_rec y z m =
+	let rec tri_rec y z =
 		match y with
 		| [] -> []
 		| t::q ->	
-		begin
-			Mark.set t (m+1);
 			let zp = t::z in
 				let yp = fold_succ (fun vt vq -> if (listInclude (pred g vt) zp) then vq@[vt] else vq) g t q in	
-		 		(tri_rec yp zp (m+1))@[t]
-		end	
-	in tri_rec (sansDep g) [] 0
+		 		(tri_rec yp zp)@[t]	
+	in tri_rec (sansDep g) [] 
 ;;
 
 (* tests *)
@@ -165,7 +176,7 @@ type trace = (DAG.vertex list) list;;
 val ordonnanceur_sans_heuristique : int -> DAG.t -> trace
    *)
 let rec etape_ordonnanceur g y z res =
-	let rec tri_rec y ytodo z result res m =
+	let rec tri_rec y ytodo z result res =
 		match y with
 		| [] -> (ytodo, z ,result)
 		| t::q ->	
@@ -173,14 +184,11 @@ let rec etape_ordonnanceur g y z res =
 			if (res < 1) then
 				(y@ytodo, z, result)
 			else
-				begin
-					(* enough *)
-					Mark.set t (m+1);
-					let zp = t::z in
-						let yp = fold_succ (fun vt vq -> if (listInclude (pred g vt) zp) then vq@[vt] else vq) g t ytodo in	
-	 					(tri_rec q yp zp (result@[t]) (res - 1) (m+1))
-				end	
-	in tri_rec y [] z [] res 0
+				(* enough *)
+				let zp = t::z in
+					let yp = fold_succ (fun vt vq -> if (listInclude (pred g vt) zp) then vq@[vt] else vq) g t ytodo in	
+	 				(tri_rec q yp zp (result@[t]) (res - 1))
+	in tri_rec y [] z [] res 
 ;;
 
 let ordonnanceur_sans_heuristique res g =
@@ -266,6 +274,36 @@ let printordog2h = printListeListeSommets ordog2h;;
    - vous utiliserez la meme heuristique que le cas non-contraint 
 val ordonnanceur_contrainte_memoire : int -> int -> DAG.t -> trace
    *)
+
+let rec etape_ordonnanceur_contrainte g y z res mem =
+	let rec tri_rec y ytodo z result res mact =
+		match y with
+		| [] -> (ytodo, z ,result)
+		| t::q ->	
+			(* not enough resources *)
+			if (res < 1) then
+				(y@ytodo, z, result)
+			else
+				begin
+					(* enough *)
+					Mark.set t (mact+1);
+					let zp = t::z in
+						let yp = fold_succ (fun vt vq -> if (listInclude (pred g vt) zp) then vq@[vt] else vq) g t ytodo in	
+	 					(tri_rec q yp zp (result@[t]) (res - 1) (mact + (Mark.get t )))
+				end	
+	in tri_rec y [] z [] res 0
+;;
+
+
+let ordonnanceur_contrainte_memoire res mem g =
+	let rec ordonnanceur_full y z result =
+		match y with
+		|[] -> result
+		|t::q ->
+			let (y_etape, z_etape, result_etape) = etape_ordonnanceur_contrainte g y z res mem
+			in ordonnanceur_full (sortBy_chemin_critique g y_etape) z_etape (result@[result_etape])
+	in ordonnanceur_full (sansDep g) [] []	
+;;
 
 
 (* entrees: 
