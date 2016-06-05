@@ -50,13 +50,3 @@ struct
 end
 
 
-(*
-algorithme de tri topologique utilisant un format de file pour Y
-IN
-OUT  
-*)
-let tri_topologique V = 
-	let Y = SansDep(V) in
-		
-;;
-
