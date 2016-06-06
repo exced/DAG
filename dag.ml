@@ -28,6 +28,11 @@ end
 module DAG = 
 struct
 	include Graph.Imperative.Digraph.AbstractLabeled(Vertex)(Edge)
+
+	module Attributes = struct
+		include Graph.Imperative.Digraph.AbstractLabeled(Vertex)(Edge)
+		let vertex_mem v = Vertex.memory (V.label v)
+	end
 	
 	module Display = struct
 		include Graph.Imperative.Digraph.AbstractLabeled(Vertex)(Edge)

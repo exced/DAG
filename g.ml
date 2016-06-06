@@ -278,6 +278,7 @@ let printordog2h = printListeListeSommets ordog2h;;
 val ordonnanceur_contrainte_memoire : int -> int -> DAG.t -> trace
    *)
 
+
 let rec etape_ordonnanceur_contrainte g y z res mem =
 	let rec tri_rec y ytodo z result res mact =
 		match y with
@@ -290,7 +291,7 @@ let rec etape_ordonnanceur_contrainte g y z res mem =
 				(* enough *)
 				let zp = t::z in
 					let yp = fold_succ (fun vt vq -> if (listInclude (pred g vt) zp) then vq@[vt] else vq) g t ytodo in	
- 					(tri_rec q yp zp (result@[t]) (res - 1) (mact + (Mark.get t )))	
+ 					(tri_rec q yp zp (result@[t]) (res - 1) (mact + (DAG.Attributes.vertex_mem t)))	
 	in tri_rec y [] z [] res 0
 ;;
 

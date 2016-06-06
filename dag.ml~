@@ -34,6 +34,7 @@ struct
 		let vertex_name v = Vertex.strname (V.label v)
 		let graph_attributes _ = []
 		let default_vertex_attributes _ = []
+		let vertex_mem v = Vertex.memory (V.label v)
 		let vertex_attributes v = [`Label ((Vertex.strname (V.label v))^":"^(Vertex.strmemory (V.label v)))]
 		let default_edge_attributes _ = []
 		let edge_attributes e = []
