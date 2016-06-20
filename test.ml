@@ -146,6 +146,9 @@ let printordodag3r3 = printListeListeSommets ordodag3r3;;
 let ordodag3r4 = ordonnanceur_sans_heuristique 4 dag3;;
 let printordodag3r4 = printListeListeSommets ordodag3r4;;
 
+let ordodag3r7 = ordonnanceur_sans_heuristique 7 dag3;;
+let printordodag3r7 = printListeListeSommets ordodag3r7;;
+
 let ordodag1r2 = ordonnanceur_sans_heuristique 2 dag1;;
 let printordodag1r2 = printListeListeSommets ordodag1r2;;
 
@@ -201,6 +204,14 @@ let printordodag1r4h = printListeListeSommets ordodag1r4h;;
 
 
 (* TEST ordonnanceur_avec_contrainte *)
+let ordog1r2m1hc = ordonnanceur_contrainte_memoire 2 1 g1;;
+let printordog1r2m1hc = printListeListeSommets ordog1r2m1hc;;
+
+let ordog1r2m2hc = ordonnanceur_contrainte_memoire 2 2 g1;;
+let printordog1r2m2hc = printListeListeSommets ordog1r2m2hc;;
+
+let ordog1r2m3hc = ordonnanceur_contrainte_memoire 2 3 g1;;
+let printordog1r2m3hc = printListeListeSommets ordog1r2m3hc;;
 
 
 
